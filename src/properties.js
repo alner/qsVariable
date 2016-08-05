@@ -2,7 +2,6 @@
 define(["./util"], function (util) {
     'use strict';
     return {
-
         initialProperties: {
             variableValue: {},
             variableName: "",

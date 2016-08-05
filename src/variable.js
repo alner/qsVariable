@@ -55,7 +55,6 @@ define(["qlik", "./util", "./properties", "./vendors/moment.min"], function (qli
         initialProperties: prop.initialProperties,
         definition: prop.definition,
         paint: function ($element, layout) {
-            console.log(layout);
             var wrapper = util.createElement('div', layout.style || 'qlik'),
                 width = getWidth(layout),
                 ext = this;
