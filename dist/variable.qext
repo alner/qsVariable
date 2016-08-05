@@ -1,0 +1,7 @@
+{
+    "name": "Variable",
+    "description": "Variable extension",
+    "version": "2.3.0",
+    "type": "visualization",
+    "author": "Erik Wetterberg"
+}
