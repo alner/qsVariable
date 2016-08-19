@@ -129,6 +129,7 @@ define(["./util"], function (util) {
                                     ref: "min",
                                     label: "Min",
                                     type: "number",
+                                    expression : "optional",
                                     defaultValue: 0,
                                     show: function (data) {
                                         return data.render === "l";
@@ -138,6 +139,7 @@ define(["./util"], function (util) {
                                     ref: "max",
                                     label: "Max",
                                     type: "number",
+                                    expression : "optional",
                                     defaultValue: 100,
                                     show: function (data) {
                                         return data.render === "l";
