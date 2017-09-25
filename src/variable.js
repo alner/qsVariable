@@ -48,6 +48,21 @@ define(["qlik", "./util", "./properties", "./vendors/moment.min"], function (qli
 
     function getFormattedDate(val, fromFormat, toFormat) {
       return moment(val, fromFormat).format(toFormat);
+      // moment(val, fromFormat).format(toFormat);
+    }
+    
+    function changeVariableValue(currApp, varName, value) {
+        // Qlik buggy code workaround:
+        if(currApp.model && currApp.model.getVariableByName)
+            currApp.model.getVariableByName(varName).then(function (variable) {
+                variable.setStringValue(value);
+            });
+        else
+            currApp.variable.setContent(varName, value);
+    }
+
+    function getVariableName(layout) {
+        return layout.variableName_ || layout.variableName;
     }
 
     util.addStyleSheet("extensions/variable/variable.css");
@@ -63,7 +78,8 @@ define(["qlik", "./util", "./properties", "./vendors/moment.min"], function (qli
                     var btn = util.createElement('button', getClass(layout.style, 'button',
                         alt.value === layout.variableValue), alt.label);
                     btn.onclick = function () {
-                        qlik.currApp(ext).variable.setContent(layout.variableName, alt.value);
+                        //qlik.currApp(ext).variable.setContent(layout.variableName, alt.value);
+                        changeVariableValue(qlik.currApp(ext), getVariableName(layout), this.value);
                     };
                     btn.style.width = width;
                     wrapper.appendChild(btn);
@@ -78,7 +94,8 @@ define(["qlik", "./util", "./properties", "./vendors/moment.min"], function (qli
                     sel.appendChild(opt);
                 });
                 sel.onchange = function () {
-                    qlik.currApp(ext).variable.setContent(layout.variableName, this.value);
+                    //qlik.currApp(ext).variable.setContent(layout.variableName, this.value);
+                    changeVariableValue(qlik.currApp(ext), getVariableName(layout), this.value);
                 };
                 wrapper.appendChild(sel);
             } else if (layout.render === 'l') {
@@ -97,7 +114,8 @@ define(["qlik", "./util", "./properties", "./vendors/moment.min"], function (qli
                     } else {
                         this.title = this.value;
                     }
-                    qlik.currApp(ext).variable.setContent(layout.variableName, this.value);
+                    //qlik.currApp(ext).variable.setContent(layout.variableName, this.value);
+                    changeVariableValue(qlik.currApp(ext), getVariableName(layout), this.value);
                 };
                 range.oninput = function () {
                     if (this.label) {
@@ -122,16 +140,17 @@ define(["qlik", "./util", "./properties", "./vendors/moment.min"], function (qli
                 inputDate.style.width = width;
                 inputDate.type = 'date';
 				inputDate.required =  'required';
-                inputDate.value = getFormattedDate(layout.variableValue, layout.dateFormat, 'YYYY-MM-DD').toString(); // 'yyyy-MM-dd', see  [RFC 3339]
+                inputDate.value = getFormattedDate(layout.variableValue, layout.dateFormat, "YYYY-MM-DD").toString(); // 'yyyy-MM-dd', see  [RFC 3339]
                 if(layout.minDate)
-                  inputDate.min = getFormattedDate(layout.minDate, layout.dateFormat, 'YYYY-MM-DD').toString();
+                  inputDate.min = getFormattedDate(layout.minDate, layout.dateFormat, "YYYY-MM-DD").toString();
 
                 if(layout.maxDate)
-                  inputDate.max = getFormattedDate(layout.maxDate, layout.dateFormat, 'YYYY-MM-DD').toString();
+                  inputDate.max = getFormattedDate(layout.maxDate, layout.dateFormat, "YYYY-MM-DD").toString();
 
                 inputDate.onchange = function () {
                     var formattedVal = moment(this.value).format(layout.dateFormat).toString();
-                    qlik.currApp(ext).variable.setContent(layout.variableName, formattedVal);
+                    //qlik.currApp(ext).variable.setContent(layout.variableName, formattedVal);
+                    changeVariableValue(qlik.currApp(ext), getVariableName(layout), formattedVal);
                 };
 
                 wrapper.appendChild(inputDate);
@@ -141,7 +160,9 @@ define(["qlik", "./util", "./properties", "./vendors/moment.min"], function (qli
                 fld.type = 'text';
                 fld.value = layout.variableValue;
                 fld.onchange = function () {
-                    qlik.currApp(ext).variable.setContent(layout.variableName, this.value);
+                    // Qlik buggy code workaround:
+                    // qlik.currApp(ext).variable.setContent(layout.variableName, this.value);
+                    changeVariableValue(qlik.currApp(ext), getVariableName(layout), this.value);
                 };
                 wrapper.appendChild(fld);
             }

@@ -1,10 +1,11 @@
 /*global define*/
-define(["./util"], function (util) {
+define(["qlik", "./util"], function (qlik, util) {
     'use strict';
     return {
         initialProperties: {
             variableValue: {},
-            variableName: "",
+            variableName_: "",
+            variableName: {},
             render: "f",
             alternatives: [],
             min: 0,
@@ -29,10 +30,27 @@ define(["./util"], function (util) {
                                     ref: "variableName",
                                     label: "Name",
                                     type: "string",
+                                    component : "expression",
+                                    expression: "optional",
                                     change: function (data) {
-                                        util.createVariable(data.variableName);
+                                        //util.createVariable(data.variableName);
                                         data.variableValue = data.variableValue || {};
-                                        data.variableValue.qStringExpression = '=' + data.variableName;
+                                        if(data.variableName.trim().startsWith('=')) {
+                                            data.variableName_ = {};
+                                            data.variableName_.qStringExpression = '=' + data.variableName;
+                                            data.variableValue.qStringExpression = '=$(=' + data.variableName + ')';
+                                            // create variable
+                                            qlik.currApp().createGenericObject({ variableName: {
+                                                qStringExpression: data.variableName
+                                            }}, function(reply){
+                                                util.createVariable(reply.variableName);
+                                            });
+                                        }
+                                        else {
+                                            util.createVariable(data.variableName);
+                                            data.variableName_ = data.variableName;
+                                            data.variableValue.qStringExpression = '=' + data.variableName;
+                                        }
                                     }
                                 },
                                 style: {
