@@ -138,8 +138,10 @@ define(["qlik", "./util", "./properties", "./vendors/moment.min"], function (qli
             } else if(layout.render === 'd') {
                 var inputDate = util.createElement('input', getClass(layout.style, 'input'));
                 inputDate.style.width = width;
-                inputDate.type = 'date';
-				inputDate.required =  'required';
+                //inputDate.type = 'date';
+				inputDate.setAttribute('type', 'date');
+				//inputDate.required =  'required';
+				inputDate.setAttribute('required', 'required');
                 inputDate.value = getFormattedDate(layout.variableValue, layout.dateFormat, "YYYY-MM-DD").toString(); // 'yyyy-MM-dd', see  [RFC 3339]
                 if(layout.minDate)
                   inputDate.min = getFormattedDate(layout.minDate, layout.dateFormat, "YYYY-MM-DD").toString();
